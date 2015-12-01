@@ -7,4 +7,9 @@
  * Time: 10:45 AM
  */
 
-Route::get('/cloudsms', 'Leelam\Cloudsms\Http\Controllers\CloudsmsController@index');
+Route::group([ 'namespace' => 'Leelam\Cloudsms\Http\Controllers' ], function () {
+
+    Route::get('/cloudsms', 'CloudsmsController@index');
+    Route::post('/sendCloudsms', 'CloudsmsController@sendCloudsms');
+
+});

@@ -40,6 +40,16 @@
             text-decoration: none;
             color: inherit;
         }
+        #testCloudsms{
+        }
+        #testCloudsms input.form-control{
+            height: 40px;
+            border: 1px solid #e1f1f1;
+            font-size: 16px;
+            text-align: center;
+            color: #999999;
+            width: 50%;
+        }
     </style>
 </head>
 <body>
@@ -48,6 +58,12 @@
         <div class="title">Cloudsms</div>
         <div class="subclass">Made for Laravel by <a href="http://www.leelam.com?package=ref" target="">Leelam</a></div>
         <a href="">Learn more about configuring thing in proper way</a>
+    </div>
+    <div id="testCloudsms">
+        <form action="/sendCloudsms" method="post">
+            <input type="hidden" name="_token" value="{{csrf_token()}}">
+        <input name="mobiles" type="number" maxlength="10" class="form-control" placeholder="Write your mobile number to test and hit enter" >
+        </form>
     </div>
 </div>
 </body>

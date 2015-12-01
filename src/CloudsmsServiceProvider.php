@@ -12,10 +12,10 @@ class CloudsmsServiceProvider extends ServiceProvider {
 
     public function register()
     {
-        /*
+
         $this->app->bind( 'cloudsms', function () {
             return new Libraries\Gateways\SMS\Cloudsms;
-        });*/
+        });
 
         // Fetching the Default connection from cloudsms config file
         $provider = 'cloudsms';  //config('cloudsms.connection');
@@ -31,9 +31,13 @@ class CloudsmsServiceProvider extends ServiceProvider {
         );
 
 
+        // Loads service configs from package config file when fails main config
         $this->mergeConfigFrom(
             __DIR__ . '/config/cloudsms.php', 'cloudsms'
         );
+
+        // Loads views from package resources views when fails main views
+        $this->loadViewsFrom(__DIR__ . '/resources/views', 'cloudsms');
     }
 
     public function boot()

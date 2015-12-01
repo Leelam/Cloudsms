@@ -10,6 +10,7 @@
 Route::group([ 'namespace' => 'Leelam\Cloudsms\Http\Controllers' ], function () {
 
     Route::get('/cloudsms', 'CloudsmsController@index');
-    Route::post('/sendCloudsms', 'CloudsmsController@sendCloudsms');
+
+    Route::post('/sendCloudsms',['as' => 'sendCloudsms', 'uses' =>  'CloudsmsController@sendCloudsms' ]);
 
 });

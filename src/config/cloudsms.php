@@ -75,7 +75,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Anything that can right
+    | Default SMSing Services POST or GET
     |--------------------------------------------------------------------------
     |
     | Lorem Ipsum is simply dummy text of the printing and typesetting industry.
@@ -84,5 +84,33 @@ return [
     |
     */
 
-    'anything' => 'anyThing',
+    'connection' => 'cloudsms',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Arrays of connection
+    |--------------------------------------------------------------------------
+    |
+    | Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+    | IT has been the industry's standard dummy text ever since the 1500s.
+    | A galley of type and scrambled it to make a type specimen book.
+    |
+    */
+
+    'connections' => [
+
+        'cloudsms' => [
+            'route' => env('CLOUDSMS_ROUTE', 'FallBackRoute'),
+            'sender' => env('CLOUDSMS_SENDER', 'FallBackSenderId'),
+            'authkey' => env('CLOUDSMS_AUTHKEY', 'SomeHashStringGetItFromCloudsms'),
+            'send_url' => env('CLOUDSMS_SEND_URL', 'Post URL from Cloudsms')
+
+        ],
+
+        'racksms' => [
+            'username' => 'username',
+            'password' => 'password',
+        ],
+    ]
+
 ];

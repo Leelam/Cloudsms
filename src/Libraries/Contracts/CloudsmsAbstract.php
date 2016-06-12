@@ -16,10 +16,10 @@
                 return exit( "Cloudsms service is not enabled" );
             }
 
-            $this->authkey = config ( 'cloudsms.connections.cloudsms.authkey' );
-            $this->url = config ( 'cloudsms.connections.cloudsms.send_url' );
-            $this->senderId = config ( 'cloudsms.connections.cloudsms.sender' );
-            $this->route = config ( 'cloudsms.connections.cloudsms.route' );
+            $this->authkey = env ( 'CLOUDSMS_AUTH_KEY', 'GetKeyFromCloudSMS.IN' );
+            $this->url = env ( 'CLOUDSMS_SEND_URL', 'http://api.cloudsms.in/api/sendhttp.php' );
+            $this->senderId = env ( 'CLOUDSMS_SENDER_ID', 'LEELAM' );
+            $this->route = env ( 'CLOUDSMS_ROUTE', 4 );
             //   $this->connection = "default";
             $this->ch = curl_init ();
         }

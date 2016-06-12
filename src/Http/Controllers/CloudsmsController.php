@@ -18,18 +18,22 @@ class CloudsmsController extends Controller
         $this->cloudsms = $cloudsms;
     }
 
-    public function show ( $mobiles )
+    public function show ( $mobiles, $senderID = null, $route = null )
     {
         $printOutput = $this->cloudsms
             ->message ( 'This message testing purpose only. Gopal Krishna mosali :: 9949990991 ' )
             ->numbers ( $mobiles )
-            ->senderId ( 'Leelam' )
-            ->route ( 4 )
             ->send ();
+        if ( ! is_null ( $senderID ) ) {
+            $this->cloudsms->senderId ( $senderID );
+        }
+        if ( ! is_null ( $route ) ) {
+            $this->cloudsms->route ( $route );
+        }
 
-        Log::info ( ' Service : Cloudsms - Message : ' . $this->cloudsms->message . ' Sender Id : ' . $this->cloudsms->senderId . ' Mobiles : ' . $this->cloudsms->numbers . ' Route : ' . $this->cloudsms->route );
+        \Log::info ( '##' . $printOutput . '## Service : Cloudsms - Message : ' . $this->cloudsms->message . ' Sender Id : ' . $this->cloudsms->senderId . ' Mobiles : ' . $this->cloudsms->numbers . ' Route : ' . $this->cloudsms->route );
 
-        return $printOutput;
+        //return $printOutput;
 
     }
 

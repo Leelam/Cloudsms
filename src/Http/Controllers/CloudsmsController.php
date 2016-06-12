@@ -2,30 +2,31 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Leelam\Cloudsms\Libraries\Contracts\CloudsmsInterface;
+use Leelam\Cloudsms\Libraries\Contracts\cloudsms;
 
-class CloudsmsController extends BaseController {
+class CloudsmsController extends Controller {
 
     /**
-     * @var CloudsmsInterface
+     * @var cloudsms
      */
-    protected $cloudsmsInterface;
+    protected $cloudsms;
 
-    public function __construct(CloudsmsInterface $cloudsmsInterface)
+    public function __construct(CloudsmsInterface $cloudsms)
     {
-        $this->cloudsmsInterface = $cloudsmsInterface;
+        $this->cloudsms = $cloudsms;
     }
 
     public function show($mobiles)
     {
-     $printOutput =  $this->cloudsmsInterface
+     $printOutput =  $this->cloudsms
             ->message('This message testing purpose only. Gopal Krishna mosali :: 9949990991 ')
             ->numbers($mobiles)
             ->senderId('Leelam')
             ->route(4)
             ->send();
 
-        Log::info( ' Service : Cloudsms - Message : ' . $this->cloudsmsInterface->message . ' Sender Id : ' . $this->cloudsmsInterface->senderId .  ' Mobiles : ' .  $this->cloudsmsInterface->numbers .  ' Route : ' .$this->cloudsmsInterface->route  ) ;
+        Log::info( ' Service : Cloudsms - Message : ' . $this->cloudsms->message . ' Sender Id : ' . $this->cloudsms->senderId .  ' Mobiles : ' .  $this->cloudsms->numbers .  ' Route : ' .$this->cloudsms->route  ) ;
+        
         return $printOutput;
 
     }

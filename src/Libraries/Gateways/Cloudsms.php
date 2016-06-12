@@ -1,8 +1,9 @@
-<?php namespace Leelam\Cloudsms\Libraries\Gateways\SMS;
+<?php namespace Leelam\Cloudsms\Libraries\Gateways;
 
 
-use Leelam\Cloudsms\Libraries\Contracts\CloudsmsAbstract;
-use Leelam\Cloudsms\Libraries\Contracts\CloudsmsInterface;
+use Leelam\Cloudsms\Libraries\Contracts\{
+    CloudsmsAbstract, CloudsmsInterface
+};
 
 class Cloudsms extends CloudsmsAbstract implements CloudsmsInterface{
 

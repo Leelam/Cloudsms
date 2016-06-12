@@ -15,7 +15,7 @@ class CloudsmsServiceProvider extends ServiceProvider
     {
 
         $this->app->bind ( 'cloudsms', function () {
-            return new Libraries\Gateways\SMS\Cloudsms;
+            return new Libraries\Gateways\Cloudsms;
         } );
 
         // Fetching the Default connection from cloudsms config file
@@ -23,7 +23,7 @@ class CloudsmsServiceProvider extends ServiceProvider
 
         //get correct implementation namespace
         if ( $provider == 'cloudsms' ) {
-            $clientService = Libraries\Gateways\SMS\Cloudsms::class;
+            $clientService = Libraries\Gateways\Cloudsms::class;
         }
 
         $this->app->bind (

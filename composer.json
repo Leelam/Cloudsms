@@ -1,23 +1,31 @@
 {
-    "name": "leelam/cloudsms",
-    "description": "Bulk SMS Package for Laravel",
-    "keywords": ["laravel", "Package", "SMS", "Bulk", "Bulk SMS ", "leelam"],
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Gopal Krishna Mosali",
-            "email": "krishna@leelam.com"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "Leelam\\Cloudsms\\": "src/"
-        },
-        "files": [
-            "src/Http/helpers.php"
-        ]
-    },
-    "require": {
-        "illuminate/support": "~5"
+  "name": "leelam/cloudsms",
+  "description": "Bulk SMS Package for Laravel",
+  "keywords": [
+    "laravel",
+    "Package",
+    "SMS",
+    "Bulk",
+    "Bulk SMS ",
+    "leelam"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Gopal Krishna Mosali",
+      "email": "krishna@leelam.com"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Leelam\\Cloudsms\\": "src/"
+    },
+    "files": [
+      "src/Http/helpers.php"
+    ]
+  },
+  "require": {
+    "illuminate/support": "~5",
+    "php": ">=7.0"
+  }
 }

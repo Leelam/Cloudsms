@@ -22,7 +22,7 @@ interface CloudsmsInterface {
      * @param $content
      * @return mixed
      */
-    public function message ( $content ) : string;
+    public function message ( $content );
 
     /**
      * Send/Execute

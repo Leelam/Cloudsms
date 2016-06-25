@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Log;
 use Leelam\Cloudsms\Libraries\Contracts\cloudsms;
 use Leelam\Cloudsms\Libraries\Contracts\CloudsmsInterface;
 
-class CloudsmsController extends Controller
+class CloudsmsController extends \Illuminate\Routing\Controller
 {
 
     /**

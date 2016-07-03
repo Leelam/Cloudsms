@@ -66,8 +66,13 @@ class Cloudsms extends CloudsmsAbstract implements CloudsmsInterface
 
         //get response
         // var_dump(curl_getinfo($this->ch));
-        $output = curl_exec ( $this->ch );
-        $output = 'Uncomment in order to work curl_exec($this->ch) and check laravel log file.';
+        if ( env ( 'CLOUDSMS_ENV' ) == 'production' ) {
+            $output = curl_exec ( $this->ch );
+            \Log::info ( 'Success ' . $output );
+        } else {
+            $output = 'In order to send cloudsms add CLOUDSMS_ENV=production in .env file';
+            \Log::debug ( $output );
+        }
 
         //Print error if any
         if ( curl_errno ( $this->ch ) )

@@ -68,7 +68,6 @@ class Cloudsms extends CloudsmsAbstract implements CloudsmsInterface
     /**
      * @param $data
      * @return $this
-     * @deprecated 
      */
     public function send ( $data = null )
     {
@@ -82,6 +81,7 @@ class Cloudsms extends CloudsmsAbstract implements CloudsmsInterface
             'sender'  => $this->senderId,
             'route'   => $this->route,
         ];
+
         curl_setopt_array ( $this->ch, [
             CURLOPT_URL            => $this->url,
             CURLOPT_RETURNTRANSFER => true,
@@ -98,28 +98,24 @@ class Cloudsms extends CloudsmsAbstract implements CloudsmsInterface
         // var_dump(curl_getinfo($this->ch));
         if ( env ( 'CLOUDSMS_ENV' ) == 'production' ) {
             $output = curl_exec ( $this->ch );
-            \Log::info ( 'Success ' . $output );
+            \Log::info ( ' Response ' . $output );
         } else {
             $output = 'In order to send cloudsms add CLOUDSMS_ENV=production in .env file';
             \Log::debug ( $output );
         }
-
         //Print error if any
         if ( curl_errno ( $this->ch ) ) {
             echo 'error:' . curl_error ( $this->ch );
         }
-
         curl_close ( $this->ch );
 
         return $output;
 
     }
 
-    /**
-     * @return mixed|string
-     */
     public function sendXML ()
     {
+
         if ( ! collect ( $this->dataXML )->isEmpty () ) {
             $xml = '<MESSAGE>';
             $xml .= '<AUTHKEY>' . $this->authkey . '</AUTHKEY>';
@@ -174,7 +170,7 @@ class Cloudsms extends CloudsmsAbstract implements CloudsmsInterface
 
         }
 
+        \Log::error ( "No messages" );
         return false;
     }
-
 }

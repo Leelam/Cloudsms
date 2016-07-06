@@ -171,6 +171,7 @@ class Cloudsms extends CloudsmsAbstract implements CloudsmsInterface
         }
 
         \Log::error ( "No messages" );
+
         return false;
     }
 }

@@ -19,7 +19,7 @@
             $this->authkey = env ( 'CLOUDSMS_AUTH_KEY', 'GetKeyFromCloudSMS.IN' );
             $this->route = env ( 'CLOUDSMS_ROUTE', 4 );
             $this->senderId = env ( 'CLOUDSMS_SENDER_ID', 'LEELAM' );
-            $this->url = env ( 'CLOUDSMS_POST_URL', 'http://api.cloudsms.in/api/sendhttp.php' );
+            $this->url = env ( 'CLOUDSMS_POST_URL', 'http://api.cloudsms.in/api/postsms.php' );
             //   $this->connection = "default";
             $this->ch = curl_init ();
         }

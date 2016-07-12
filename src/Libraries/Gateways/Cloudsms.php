@@ -4,6 +4,7 @@
 use Leelam\Cloudsms\Libraries\Contracts\{
     CloudsmsAbstract, CloudsmsInterface
 };
+use Leelam\CloudsmsReports;
 
 class Cloudsms extends CloudsmsAbstract implements CloudsmsInterface
 {
@@ -115,7 +116,7 @@ class Cloudsms extends CloudsmsAbstract implements CloudsmsInterface
 
     public function sendXML ()
     {
-
+//dd($this->dataXML);
         if ( ! collect ( $this->dataXML )->isEmpty () ) {
             $xml = '<MESSAGE>';
             $xml .= '<AUTHKEY>' . $this->authkey . '</AUTHKEY>';
@@ -123,17 +124,45 @@ class Cloudsms extends CloudsmsAbstract implements CloudsmsInterface
             if ( $this->route == 4 OR $this->route == 'template' ) {
                 $xml .= '<SENDER>' . $this->senderId . '</SENDER>';
             } else {
-                $xml .= '<SENDER>777777</SENDER>';
+                $xml .= '<SENDER>Leelam</SENDER>';
             }
 
-            // Customized sms with their respect mobile number
-            foreach ( $this->dataXML as $textAndTo ) {
-                $xml .= '<SMS TEXT="' . $textAndTo[ 'message' ] . '">';
-                $xml .= '<ADDRESS TO="' . $textAndTo[ 'mobile' ] . '"></ADDRESS>';
+            // sending to multiple array
+            if ( ! isset( $this->dataXML[ 'message' ] ) ) {
+
+                // Customized sms with their respect mobile number
+                $i = 0;
+                foreach ( $this->dataXML as $textAndTo ) {
+
+                    $forReport[ $i ] = [
+                        'number' => $textAndTo[ 'mobile' ],
+                        'desc'   => '',
+                        'status' => '',
+                        'date'   => '',
+                    ];
+
+                    $xml .= '<SMS TEXT="' . $textAndTo[ 'message' ] . '">';
+                    $xml .= '<ADDRESS TO="' . $textAndTo[ 'mobile' ] . '"></ADDRESS>';
+                    $xml .= '</SMS>';
+
+                    $i++;
+                }
+                // send when there is only one sender, in technocal way single array of keys and values
+            } elseif ( isset( $this->dataXML[ 'message' ] ) ) {
+                $forReport = [
+                    'number' => $this->dataXML[ 'mobile' ],
+                    'desc'   => '',
+                    'status' => '',
+                    'date'   => '',
+                ];
+                $xml .= '<SMS TEXT="' . $this->dataXML[ 'message' ] . '">';
+                $xml .= '<ADDRESS TO="' . $this->dataXML[ 'mobile' ] . '"></ADDRESS>';
                 $xml .= '</SMS>';
+            } else {
+                $xml .= 'Wrong in user data, Cloudsms Gateway';
             }
             $xml .= '</MESSAGE>';
-
+//dd($xml);
             // init the resource
             $postData[ 'data' ] = $xml;
             curl_setopt_array ( $this->ch, [
@@ -152,6 +181,21 @@ class Cloudsms extends CloudsmsAbstract implements CloudsmsInterface
             // var_dump(curl_getinfo($this->ch));
             if ( env ( 'CLOUDSMS_ENV' ) == 'production' ) {
                 $output = curl_exec ( $this->ch );
+
+                if ( env ( 'CLOUDSMS_DLR' ) == 'enable' ) {
+                    if ( strlen ( $output ) === 24 ) {
+                        $report[ 'user_id' ] = 1;
+                        $report[ 'message' ] = $this->dataXML[ 'message' ]??$this->dataXML[ 0 ][ 'message' ];
+                        $report[ 'senderid' ] = $this->senderId;
+                        $report[ 'sender_ip' ] = getClientIP ();
+                        $report[ 'request_id' ] = $output;
+
+                        $report[ 'data' ] = $forReport;
+
+                        //dd($report);
+                        CloudsmsReports::create ( $report );
+                    }
+                }
                 //  curl_getinfo ($this->ch);
                 \Log::info ( ' Response ' . $output );
             } else {

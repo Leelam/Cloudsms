@@ -1,9 +1,9 @@
 <?php namespace Leelam\Cloudsms\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Leelam\Cloudsms\Libraries\Contracts\cloudsms;
 use Leelam\Cloudsms\Libraries\Contracts\CloudsmsInterface;
+use Leelam\CloudsmsReports;
 
 class CloudsmsController extends \Illuminate\Routing\Controller
 {
@@ -42,10 +42,59 @@ class CloudsmsController extends \Illuminate\Routing\Controller
         return view ( 'cloudsms::cloudsms.index' );
     }
 
-    public function sendCloudsms ( Request $request )
+    public function sendCloudsms ( Request $request, CloudsmsInterface $cloudsmsInterface )
     {
 
-        echo $this->show ( $request->mobiles );
+        //return  $cloudsmsInterface->url;
+
+        $data[ 'mobile' ] = $request->mobiles;
+
+        $tenDigitNumber = ( strlen ( $data[ 'mobile' ] ) >= 10 ) ? substr ( $data[ 'mobile' ], -10 ) : 'Wrong number';
+
+        if ( is_numeric ( $tenDigitNumber ) ) {
+
+            $data[ 'message' ] = '2 Thank you for test India\'s fast and flexible SMS API. \n Call us on 8008008322 at  any time.';
+            $senderid = 'CLDSMS';
+            $route = 4;
+
+
+            $cloudsmsInterface->dataXML ( $data )
+                ->senderId ( $senderid )
+                ->route ( $route )
+                ->sendXML ();
+
+            return back ()->with ( 'status', "That\s it" );
+        }
+
+        \Log::error ( "User has given wrong mobile number" );
+
+        return back ()->with ( 'status', "Wrong mobile number" );
+
+    }
+
+    public function getDlr ()
+    {
+        $reports = [ ];
+
+        return view ( 'cloudsms::cloudsms.reports', compact ( 'reports' ) );
+    }
+
+    public function postDlr ()
+    {
+
+        $request = $_REQUEST[ "data" ];
+        $jsonData = json_decode ( $request, true );
+        foreach ( $jsonData as $key => $value ) {
+            //think about message
+            // request id 
+            $dataToInsert[ 'request_id' ] = $value[ 'requestId' ];
+            $dataToInsert[ 'user_id' ] = $value[ 'userId' ];
+            $dataToInsert[ 'senderid' ] = $value[ 'senderId' ];
+            $dataToInsert[ 'data' ] = $value[ 'report' ]; //json
+
+            CloudsmsReports::updateOrCreate ( $dataToInsert );
+
+        }
     }
 
 }

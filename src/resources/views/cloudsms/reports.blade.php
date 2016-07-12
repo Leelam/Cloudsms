@@ -7,7 +7,7 @@
 
     <style>
         html, body {
-            height: 100%;
+            /* height: 100%;*/
         }
 
         body {
@@ -22,7 +22,7 @@
         .container {
             text-align: center;
             display: table-cell;
-            vertical-align: middle;
+            /* vertical-align: middle;*/
         }
 
         .content {
@@ -33,16 +33,20 @@
         .title {
             font-size: 96px;
         }
-        .subclass{
+
+        .subclass {
             font-size: 46px;
         }
-        a{
+
+        a {
             text-decoration: none;
             color: inherit;
         }
-        #testCloudsms{
+
+        #testCloudsms {
         }
-        #testCloudsms input.form-control{
+
+        #testCloudsms input.form-control {
             height: 40px;
             border: 1px solid #e1f1f1;
             font-size: 16px;
@@ -59,12 +63,42 @@
         <div class="subclass">Made for Laravel by <a href="http://www.leelam.com?package=ref" target="">Leelam</a></div>
         <a href="">Learn more about configuring thing in proper way</a>
     </div>
-    <div id="testCloudsms">
-        <form action="{{route('sendCloudsms')}}" method="post">
-            <input type="hidden" name="_token" value="{{csrf_token()}}">
-            <input name="mobiles" type="number" maxlength="10" class="form-control"
-                   placeholder="Write your mobile number to test and hit enter">
-        </form>
+    <div id="ReportsCloudsms">
+        <table style="width: 100%">
+            <thead>
+            <tr>
+                <th>
+                    ID
+                </th>
+                <th>
+                    Message
+                </th>
+                <th>
+                    Sender ID
+                </th>
+                <th>
+                    States
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    454sds454sdsrfv45
+                </td>
+                <td>
+                    Krishna
+                </td>
+                <td>
+                    LEELAM
+                </td>
+                <td>
+                    1 Credits
+                    2 Counts
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 </body>

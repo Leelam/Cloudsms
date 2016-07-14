@@ -90,7 +90,7 @@ class CloudsmsController extends \Illuminate\Routing\Controller
             $dataToInsert[ 'request_id' ] = $value[ 'requestId' ];
             $dataToInsert[ 'user_id' ] = $value[ 'userId' ];
             $dataToInsert[ 'senderid' ] = $value[ 'senderId' ];
-            $dataToInsert[ 'data' ] = json_encode ( $value[ 'report' ], true ); //json
+            $dataToInsert[ 'data' ] = $value[ 'report' ]; //json
 
             $cloudsmsReports = CloudsmsReports::whereRequestId ( $value[ 'requestId' ] )->first ();
 

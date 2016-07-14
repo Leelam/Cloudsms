@@ -186,8 +186,8 @@ class Cloudsms extends CloudsmsAbstract implements CloudsmsInterface
                 echo 'error:' . curl_error ( $this->ch );
             }
             curl_close ( $this->ch );
-            //      return $output;
 
+            return $output;
         }
 
         \Log::error ( "No messages" );

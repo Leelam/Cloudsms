@@ -24,10 +24,19 @@
             $this->ch = curl_init ();
         }
 
+        public function url ( $url )
+        {
+            $this->url = $url;
+            if ( $this->url == 'post' ) {
+                $this->url = 'http://api.cloudsms.in/api/sendhttp.php';
+            }
+
+            return $this;
+        }
+        
         public function senderId ( $id )
         {
             $this->senderId = $id;
-
             if ( strlen ( $this->senderId ) != 6 )
                 return exit( "Invalid sender ID" );
 
@@ -36,13 +45,9 @@
 
         public function route ( $route )
         {
-
             $this->route = $route;
-
             return $this;
         }
 
-
         // DANGER ZONE
-
     }

@@ -1,9 +1,10 @@
 <?php namespace Leelam\Cloudsms\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Leelam\Cloudsms\Libraries\CloudsmsReports;
 use Leelam\Cloudsms\Libraries\Contracts\cloudsms;
 use Leelam\Cloudsms\Libraries\Contracts\CloudsmsInterface;
-use Leelam\CloudsmsReports;
+
 
 class CloudsmsController extends \Illuminate\Routing\Controller
 {
@@ -82,18 +83,22 @@ class CloudsmsController extends \Illuminate\Routing\Controller
     public function postDlr ()
     {
 
-        $request = $_REQUEST[ "data" ];
-        $jsonData = json_decode ( $request, true );
+        \Log::error ( "Cloudsms has started posting DLRs" );
+
+        $jsonData = json_decode ( $_REQUEST[ "data" ], true );
         foreach ( $jsonData as $key => $value ) {
-            //think about message
-            // request id 
             $dataToInsert[ 'request_id' ] = $value[ 'requestId' ];
             $dataToInsert[ 'user_id' ] = $value[ 'userId' ];
             $dataToInsert[ 'senderid' ] = $value[ 'senderId' ];
-            $dataToInsert[ 'data' ] = $value[ 'report' ]; //json
+            $dataToInsert[ 'data' ] = json_encode ( $value[ 'report' ], true ); //json
 
-            CloudsmsReports::updateOrCreate ( $dataToInsert );
+            $cloudsmsReports = CloudsmsReports::whereRequestId ( $value[ 'requestId' ] )->first ();
 
+            if ( ! is_null ( $cloudsmsReports ) ) {
+                $cloudsmsReports->update ( [ 'data' => $dataToInsert[ 'data' ] ] );
+            } else {
+                \Log::error ( "Error in posting DLRs. Cloudsms Package error." );
+            }
         }
     }
 

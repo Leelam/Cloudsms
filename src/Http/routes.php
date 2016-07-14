@@ -16,7 +16,7 @@
         // get tabled reports
         Route::get ( 'cloudsms/reports', [ 'as' => 'getDLR', 'uses' => 'CloudsmsController@getDlr' ] );
 
-        // You must whitelist this
+        // You must whitelist this cloudsms/reports from CSRF token
         Route::post ( 'cloudsms/reports', [ 'as' => 'postDLR', 'uses' => 'CloudsmsController@postDlr' ] );
 
     } );

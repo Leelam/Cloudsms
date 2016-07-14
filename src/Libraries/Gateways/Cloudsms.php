@@ -1,10 +1,10 @@
 <?php namespace Leelam\Cloudsms\Libraries\Gateways;
 
 
+use Leelam\Cloudsms\Libraries\CloudsmsReports;
 use Leelam\Cloudsms\Libraries\Contracts\{
     CloudsmsAbstract, CloudsmsInterface
 };
-use Leelam\CloudsmsReports;
 
 class Cloudsms extends CloudsmsAbstract implements CloudsmsInterface
 {
@@ -73,7 +73,6 @@ class Cloudsms extends CloudsmsAbstract implements CloudsmsInterface
     public function send ( $data = null )
     {
         // $this->send = $data;
-
         // init the resource
         $postData = [
             'authkey' => $this->authkey,
@@ -99,6 +98,9 @@ class Cloudsms extends CloudsmsAbstract implements CloudsmsInterface
         // var_dump(curl_getinfo($this->ch));
         if ( env ( 'CLOUDSMS_ENV' ) == 'production' ) {
             $output = curl_exec ( $this->ch );
+
+            $this->postInstantReports ( $this->message, $this->senderId, $output, $this->route, $this->numbers );
+
             \Log::info ( ' Response ' . $output );
         } else {
             $output = 'In order to send cloudsms add CLOUDSMS_ENV=production in .env file';
@@ -111,53 +113,36 @@ class Cloudsms extends CloudsmsAbstract implements CloudsmsInterface
         curl_close ( $this->ch );
 
         return $output;
-
     }
 
+    /**
+     * @return bool|mixed|string
+     */
     public function sendXML ()
     {
-//dd($this->dataXML);
-        if ( ! collect ( $this->dataXML )->isEmpty () ) {
+
+        $collectedXMLData = collect ( $this->dataXML );
+        if ( ! $collectedXMLData->isEmpty () ) {
             $xml = '<MESSAGE>';
             $xml .= '<AUTHKEY>' . $this->authkey . '</AUTHKEY>';
             $xml .= '<ROUTE>' . $this->route . '</ROUTE>';
-            if ( $this->route == 4 OR $this->route == 'template' ) {
-                $xml .= '<SENDER>' . $this->senderId . '</SENDER>';
-            } else {
-                $xml .= '<SENDER>Leelam</SENDER>';
-            }
+            $xml .= '<SENDER>' . $this->senderId . '</SENDER>';
 
-            // sending to multiple array
+            // conforming dataXML is not single dimensional array
             if ( ! isset( $this->dataXML[ 'message' ] ) ) {
-
                 // Customized sms with their respect mobile number
-                $i = 0;
-                foreach ( $this->dataXML as $textAndTo ) {
-
-                    $forReport[ $i ] = [
-                        'number' => $textAndTo[ 'mobile' ],
-                        'desc'   => '',
-                        'status' => '',
-                        'date'   => '',
-                    ];
-
+                foreach ( $collectedXMLData as $textAndTo ) {
                     $xml .= '<SMS TEXT="' . $textAndTo[ 'message' ] . '">';
                     $xml .= '<ADDRESS TO="' . $textAndTo[ 'mobile' ] . '"></ADDRESS>';
                     $xml .= '</SMS>';
-
-                    $i++;
                 }
-                // send when there is only one sender, in technocal way single array of keys and values
+                // dataXML is single/single dimensional array
             } elseif ( isset( $this->dataXML[ 'message' ] ) ) {
-                $forReport = [
-                    'number' => $this->dataXML[ 'mobile' ],
-                    'desc'   => '',
-                    'status' => '',
-                    'date'   => '',
-                ];
+
                 $xml .= '<SMS TEXT="' . $this->dataXML[ 'message' ] . '">';
                 $xml .= '<ADDRESS TO="' . $this->dataXML[ 'mobile' ] . '"></ADDRESS>';
                 $xml .= '</SMS>';
+
             } else {
                 $xml .= 'Wrong in user data, Cloudsms Gateway';
             }
@@ -184,16 +169,10 @@ class Cloudsms extends CloudsmsAbstract implements CloudsmsInterface
 
                 if ( env ( 'CLOUDSMS_DLR' ) == 'enable' ) {
                     if ( strlen ( $output ) === 24 ) {
-                        $report[ 'user_id' ] = 1;
+
                         $report[ 'message' ] = $this->dataXML[ 'message' ]??$this->dataXML[ 0 ][ 'message' ];
-                        $report[ 'senderid' ] = $this->senderId;
-                        $report[ 'sender_ip' ] = getClientIP ();
-                        $report[ 'request_id' ] = $output;
 
-                        $report[ 'data' ] = $forReport;
-
-                        //dd($report);
-                        CloudsmsReports::create ( $report );
+                        $this->postInstantReports ( $report[ 'message' ], $this->senderId, $output, $this->route, $collectedXMLData );
                     }
                 }
                 //  curl_getinfo ($this->ch);
@@ -202,20 +181,56 @@ class Cloudsms extends CloudsmsAbstract implements CloudsmsInterface
                 $output = 'In order to send cloudsms add CLOUDSMS_ENV=production in .env file';
                 \Log::debug ( $output );
             }
-
             //Print error if any
             if ( curl_errno ( $this->ch ) ) {
                 echo 'error:' . curl_error ( $this->ch );
             }
-
             curl_close ( $this->ch );
-
-            return $output;
+            //      return $output;
 
         }
 
         \Log::error ( "No messages" );
 
         return false;
+    }
+
+    /**
+     * @param $message
+     * @param $senderid
+     * @param $request_id
+     * @param $request_route
+     * @param $numbers
+     */
+    private function postInstantReports ( $message, $senderid, $request_id, $request_route, $numbers )
+    {
+        if ( env ( 'CLOUDSMS_DLR' ) == 'enable' ) {
+            if ( strlen ( $request_id ) === 24 ) {
+
+                if ( is_array ( $numbers ) ) {
+                    $n = 0;
+                    foreach ( $numbers as $number ) {
+                        $numbersArray[ $n ] = $number[ 'mobile' ];
+                        $n++;
+                    }
+                } elseif ( is_string ( $numbers ) ) {
+                    $numbersArray = explode ( ",", $numbers );
+                } else {
+                    exit( "Error" );
+                }
+                $i = 0;
+                foreach ( $numbersArray as $singlenumber ) {
+                    $responseData[ $i ] = [
+                        $dataReportmaker[ 'number' ] = $singlenumber, // Int
+                        $dataReportmaker[ 'desc' ] = '', // Description
+                        $dataReportmaker[ 'status' ] = '', // Int
+                        $date[ 'date' ] = now ( 'Y-m-d h:m:s' ) //delivery report time
+                    ];
+                    $i++;
+                }
+                CloudsmsReports::createInstantReport ( $message, $senderid, $request_id, $request_route, $responseData );
+            }
+
+        }
     }
 }

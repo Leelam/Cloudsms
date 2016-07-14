@@ -54,7 +54,7 @@ class CloudsmsController extends \Illuminate\Routing\Controller
 
         if ( is_numeric ( $tenDigitNumber ) ) {
 
-            $data[ 'message' ] = '2 Thank you for test India\'s fast and flexible SMS API. \n Call us on 8008008322 at  any time.';
+            $data[ 'message' ] = 'Thank you for testing India\'s fast and flexible SMS API. \n Call us on 8008008322 at  any time.';
             $senderid = 'CLDSMS';
             $route = 4;
 

@@ -37,8 +37,11 @@
         public function senderId ( $id )
         {
             $this->senderId = $id;
-            if ( strlen ( $this->senderId ) != 6 )
-                return exit( "Invalid sender ID" );
+            if ( strlen ( $this->senderId ) != 6 ) {
+                \Log::error ( "Invalid sender ID, and mapped to default sender id from ENV." );
+                $this->senderId = env ( 'CLOUDSMS_SENDER_ID', 'LEELAM' );
+                //return exit( "Invalid sender ID" );
+            }
 
             return $this;
         }

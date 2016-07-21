@@ -207,7 +207,7 @@ class Cloudsms extends CloudsmsAbstract implements CloudsmsInterface
         if ( env ( 'CLOUDSMS_DLR' ) == 'enable' ) {
             if ( strlen ( $request_id ) === 24 ) {
 
-                if ( is_array ( $numbers ) ) {
+                if ( is_array ( $numbers ) || is_object ( $numbers ) ) { // is_obects actually deals with laravel collection object
                     $n = 0;
                     foreach ( $numbers as $number ) {
                         $numbersArray[ $n ] = $number[ 'mobile' ];
